@@ -1,0 +1,7 @@
+
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+
+RewriteRule ^v1/(.*?)/(raw|html|json|serial|xml).api 					index.php?field=$1&output=$2  					[L,NC,QSA]
