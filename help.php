@@ -18,15 +18,24 @@
  * @subpackage		api
  * @description		Whois API Service REST
  */
-	$pu = parse_url($_SERVER['REQUEST_URI']);
-	$source = (isset($_SERVER['HTTPS'])?'https://':'http://').strtolower($_SERVER['HTTP_HOST']).$pu['path'];
+    $formats = getImageFormats();
 	$ua = substr(sha1($_SERVER['HTTP_USER_AGENT']), mt_rand(0,32), 9);
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+<meta property="og:title" content="<?php echo API_VERSION; ?>"/>
+<meta property="og:type" content="api<?php echo API_TYPE; ?>"/>
+<meta property="og:image" content="<?php echo API_URL; ?>/assets/images/logo_500x500.png"/>
+<meta property="og:url" content="<?php echo (isset($_SERVER["HTTPS"])?"https://":"http://").$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"]; ?>" />
+<meta property="og:site_name" content="<?php echo API_VERSION; ?> - <?php echo API_LICENSE_COMPANY; ?>"/>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Optical Character Recognition API Services || Chronolabs Cooperative</title>
+<meta http-equiv="rating" content="general" />
+<meta http-equiv="<?php echo $place['iso2']; ?>thor" content="wishcraft@users.sourceforge.net" />
+<meta http-equiv="copyright" content="<?php echo API_LICENSE_COMPANY; ?> &copy; <?php echo date("Y"); ?>" />
+<meta http-equiv="generator" content="Chronolabs Cooperative (<?php echo $place['iso3']; ?>)" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><?php echo API_VERSION; ?> || <?php echo API_LICENSE_COMPANY; ?></title>
 <!-- AddThis Smart Layers BEGIN -->
 <!-- Go to http://www.addthis.com/get/smart-layers to customize -->
 <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-50f9a1c208996c1d"></script>
@@ -39,10 +48,10 @@
 	}, 
 	'follow' : {
 	  'services' : [
-		{'service': 'facebook', 'id': 'chronolabs'},
-		{'service': 'twitter', 'id': 'negativitygear'},
-		{'service': 'linkedin', 'id': 'ceoandfounder'},
-		{'service': 'google_follow', 'id': '111267413375420332318'}
+		{'service': 'facebook', 'id': 'ChronolabsCoop'},
+		{'service': 'twitter', 'id': 'AntonyXaies'},
+		{'service': 'twitter', 'id': 'ChronolabsCoop'},
+		{'service': 'twitter', 'id': 'OpenRend'},
 	  ]
 	},  
 	'whatsnext' : {},  
@@ -52,108 +61,44 @@
   });
 </script>
 <!-- AddThis Smart Layers END -->
-<style>
-body {
-	font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
-	font-size:85%em;
-	background: #a647b7; /* Old browsers */
-	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
-	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjYTY0N2I3IiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2VhZTI0NiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgPC9saW5lYXJHcmFkaWVudD4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2dyYWQtdWNnZy1nZW5lcmF0ZWQpIiAvPgo8L3N2Zz4=);
-	background: -moz-linear-gradient(-45deg,  #a647b7 0%, #eae246 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,#a647b7), color-stop(100%,#eae246)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(-45deg,  #a647b7 0%,#eae246 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(-45deg,  #a647b7 0%,#eae246 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(-45deg,  #a647b7 0%,#eae246 100%); /* IE10+ */
-	background: linear-gradient(135deg,  #a647b7 0%,#eae246 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a647b7', endColorstr='#eae246',GradientType=1 ); /* IE6-8 fallback on horizontal gradient */
-	text-align:justify;
-}
-.main {
-	border:3px solid #000000;
-	border-radius:15px;
-	background-color:#feeebe;
-	padding:39px 39px 39px 39px;
-	margin:64px 64px 64px 64px;
-	-webkit-box-shadow: 7px 7px 10px 0px rgba(108, 80, 99, 0.72);
-	-moz-box-shadow:    7px 7px 10px 0px rgba(108, 80, 99, 0.72);
-	box-shadow:         7px 7px 10px 0px rgba(108, 80, 99, 0.72);
-}
-h1 {
-	font-weight:bold;
-	font-size:1.42em;
-	background-color:#FFEED9;
-	border-radius:15px;
-	padding:10px 10px 10px 10px;
-	text-shadow: 4px 4px 2px rgba(150, 150, 150, 1);
-}
-h2 {
-	font-weight:500;
-	font-size:1.15em;
-	text-shadow: 4px 4px 2px rgba(150, 150, 150, 1);
-}
-blockquote {
-	margin-left:25px;
-	margin-right:25px;
-	font-family:"Courier New", Courier, monospace;
-	margin-bottom:25px;
-	padding: 25px 25px 25px 25px;
-	border:dotted;
-	background-color:#fefefe;
-	-webkit-box-shadow: 7px 7px 10px 0px rgba(108, 80, 99, 0.72);
-	-moz-box-shadow:    7px 7px 10px 0px rgba(108, 80, 99, 0.72);
-	box-shadow:         7px 7px 10px 0px rgba(108, 80, 99, 0.72);
-	-webkit-border-radius: 14px;
-	-moz-border-radius: 14px;
-	border-radius: 14px;
-	text-shadow: 2px 2px 2px rgba(103, 87, 101, 0.82);
-}
-p {
-	margin-bottom:12px;
-}
-</style>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
-<script>
-	var icoroite = 9966 * Math.random() + 7755;
-	setTimeout(function() {
-		jQuery.getJSON( "//labs.coop/icons/java/invaders/random.json?sessionid=<?php echo session_id(); ?>", function( data ) {
-			$.each(data, function( keyey, value ) {
-				$( "#" + keyey ).href = value;
-			});
-		});
-	}, icoroite);
-</script>
-<?php
-	if ((!isset($_SESSION['icon-meta-html']) || empty($_SESSION['icon-meta-html'])) && session_id())
-		$_SESSION['icon-meta-html'] = file_get_contents("//labs.coop/icons/meta/invaders/random.html?sessionid=" . session_id());
-	if (isset($_SESSION['icon-meta-html']) && !empty($_SESSION['icon-meta-html']))
-		echo $_SESSION['icon-meta-html'];
-	else
-		echo file_get_contents("http://icons.labs.coop/meta/invaders/random.html?sessionid=" . session_id());
-?>
-<link rel="stylesheet" href="//labs.coop/css/3/gradientee/stylesheet.css?sessionid=<?php echo session_id(); ?>" type="text/css">
-<link rel="stylesheet" href="//labs.coop/css/3/shadowing/styleheet.css?sessionid=<?php echo session_id(); ?>" type="text/css">
+<link rel="stylesheet" href="<?php echo API_URL; ?>/assets/css/style.css" type="text/css" />
+<!-- Custom Fonts -->
+<link href="<?php echo API_URL; ?>/assets/media/Labtop/style.css" rel="stylesheet" type="text/css">
+<link href="<?php echo API_URL; ?>/assets/media/Labtop Bold/style.css" rel="stylesheet" type="text/css">
+<link href="<?php echo API_URL; ?>/assets/media/Labtop Bold Italic/style.css" rel="stylesheet" type="text/css">
+<link href="<?php echo API_URL; ?>/assets/media/Labtop Italic/style.css" rel="stylesheet" type="text/css">
+<link href="<?php echo API_URL; ?>/assets/media/Labtop Superwide Boldish/style.css" rel="stylesheet" type="text/css">
+<link href="<?php echo API_URL; ?>/assets/media/Labtop Thin/style.css" rel="stylesheet" type="text/css">
+<link href="<?php echo API_URL; ?>/assets/media/Labtop Unicase/style.css" rel="stylesheet" type="text/css">
+<link href="<?php echo API_URL; ?>/assets/media/LHF Matthews Thin/style.css" rel="stylesheet" type="text/css">
+<link href="<?php echo API_URL; ?>/assets/media/Life BT Bold/style.css" rel="stylesheet" type="text/css">
+<link href="<?php echo API_URL; ?>/assets/media/Life BT Bold Italic/style.css" rel="stylesheet" type="text/css">
+<link href="<?php echo API_URL; ?>/assets/media/Prestige Elite/style.css" rel="stylesheet" type="text/css">
+<link href="<?php echo API_URL; ?>/assets/media/Prestige Elite Bold/style.css" rel="stylesheet" type="text/css">
+<link href="<?php echo API_URL; ?>/assets/media/Prestige Elite Normal/style.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="<?php echo API_URL; ?>/assets/css/gradients.php" type="text/css" />
+<link rel="stylesheet" href="<?php echo API_URL; ?>/assets/css/shadowing.php" type="text/css" />
+
 </head>
+
 <body>
 <div class="main">
-    <h1>Optical Character Recognition API Services - Version 1.01</h1>
+	<img style="float: right; margin: 11px; width: auto; height: auto; clear: none;" src="<?php echo API_URL; ?>/assets/images/logo_350x350.png" />
+    <h1><?php echo API_VERSION; ?> -- <?php echo API_LICENSE_COMPANY; ?></h1>
     <p>This is an API Service for conducting a query on a Optical Character Recognition to find out text inside an image.</p>
-    <h2>Code API Documentation</h2>
-    <p>You can find the phpDocumentor code API documentation at the following path :: <a target="_blank" href="<?php echo $source; ?>docs/" target="_blank"><?php echo $source; ?>docs/</a>. These should outline the source code core functions and classes for the API to function!</p>
-    <h2>Internet API Usage Statistics</h2>
-    <p>You can find the usage statistics for this API which is update within every ten minutes at the following URI :: <a target="_blank" href="<?php echo $source; ?>stats/awstats.pl" target="_blank"><?php echo $source; ?>stats/awstats.pl</a>. These should outline the overall load and frequencies of this application programmable interface!</p>
     <h2>RAW Document Output</h2>
     <p>This is done with the <em>raw.api</em> extension at the end of the url, you replace the example address with the Optical Character Recognition you are testing the following example is of calls to the api</p>
     <blockquote>
         <font color="#009900">You need too submit a form to the following URL for the field name of <em>'<?php echo $ua; ?>'</em> containing the image to be OCR'd</font><br/><br/>
-        <em>Form action path: <strong><?php echo $source; ?>v1/<?php echo $ua; ?>/raw.api</strong></em>
-        <form name="<?php echo $ua; ?>" method="POST" enctype="multipart/form-data" action="<?php echo $source; ?>v1/<?php echo $ua; ?>/raw.api">
+        <em>Form action path: <strong><?php echo API_URL; ?>/v2/<?php echo $ua; ?>/raw.api</strong></em>
+        <form name="<?php echo $ua; ?>" method="POST" enctype="multipart/form-data" action="<?php echo API_URL; ?>/v2/<?php echo $ua; ?>/raw.api">
     			Select image to upload:
     		     <input type="file" name="<?php echo $ua; ?>" id="<?php echo $ua; ?>">
    				 <input type="submit" value="Upload Image" name="submit">
 		</form>
 		<h3>Code Example:</h3>
 		<pre style="margin: 14px; padding: 12px; border: 2px solid #ee43a4;">
-&lt;form name="<?php echo $ua; ?>" method="POST" enctype="multipart/form-data" action="<?php echo $source; ?>v1/<?php echo $ua; ?>/raw.api"&gt;
+&lt;form name="<?php echo $ua; ?>" method="POST" enctype="multipart/form-data" action="<?php echo API_URL; ?>/v2/<?php echo $ua; ?>/raw.api"&gt;
 	Select image to upload:
 	&lt;input type="file" name="<?php echo $ua; ?>" id="<?php echo $ua; ?>"&gt;
 	&lt;input type="submit" value="Upload Image" name="submit"&gt;
@@ -164,15 +109,15 @@ p {
     <p>This is done with the <em>html.api</em> extension at the end of the url, you replace the address with the Optical Character Recognition you are testing the following example is of calls to the api</p>
     <blockquote>
         <font color="#009900">You need too submit a form to the following URL for the field name of <em>'<?php echo $ua; ?>'</em> containing the image to be OCR'd</font><br/><br/>
-         <em>Form action path: <strong><?php echo $source; ?>v1/<?php echo $ua; ?>/html.api</strong></em>
-        <form name="<?php echo $ua; ?>" method="POST" enctype="multipart/form-data" action="<?php echo $source; ?>v1/<?php echo $ua; ?>/html.api">
+         <em>Form action path: <strong><?php echo API_URL; ?>/v2/<?php echo $ua; ?>/html.api</strong></em>
+        <form name="<?php echo $ua; ?>" method="POST" enctype="multipart/form-data" action="<?php echo API_URL; ?>/v2/<?php echo $ua; ?>/html.api">
     			Select image to upload:
     		     <input type="file" name="<?php echo $ua; ?>" id="<?php echo $ua; ?>">
    				 <input type="submit" value="Upload Image" name="submit">
 		</form>
 		<h3>Code Example:</h3>
 		<pre style="margin: 14px; padding: 12px; border: 2px solid #ee43a4;">
-&lt;form name="<?php echo $ua; ?>" method="POST" enctype="multipart/form-data" action="<?php echo $source; ?>v1/<?php echo $ua; ?>/html.api"&gt;
+&lt;form name="<?php echo $ua; ?>" method="POST" enctype="multipart/form-data" action="<?php echo API_URL; ?>/v2/<?php echo $ua; ?>/html.api"&gt;
 	Select image to upload:
 	&lt;input type="file" name="<?php echo $ua; ?>" id="<?php echo $ua; ?>"&gt;
 	&lt;input type="submit" value="Upload Image" name="submit"&gt;
@@ -183,15 +128,15 @@ p {
     <p>This is done with the <em>serial.api</em> extension at the end of the url, you replace the address with the Optical Character Recognition you are testing the following example is of calls to the api</p>
     <blockquote>
         <font color="#009900">You need too submit a form to the following URL for the field name of <em>'<?php echo $ua; ?>'</em> containing the image to be OCR'd</font><br/><br/>
-         <em>Form action path: <strong><?php echo $source; ?>v1/<?php echo $ua; ?>/serial.api</strong></em>
-        <form name="<?php echo $ua; ?>" method="POST" enctype="multipart/form-data" action="<?php echo $source; ?>v1/<?php echo $ua; ?>/serial.api">
+         <em>Form action path: <strong><?php echo API_URL; ?>/v2/<?php echo $ua; ?>/serial.api</strong></em>
+        <form name="<?php echo $ua; ?>" method="POST" enctype="multipart/form-data" action="<?php echo API_URL; ?>/v2/<?php echo $ua; ?>/serial.api">
     			Select image to upload:
     		     <input type="file" name="<?php echo $ua; ?>" id="<?php echo $ua; ?>">
    				 <input type="submit" value="Upload Image" name="submit">
 		</form>
 		<h3>Code Example:</h3>
 		<pre style="margin: 14px; padding: 12px; border: 2px solid #ee43a4;">
-&lt;form name="<?php echo $ua; ?>" method="POST" enctype="multipart/form-data" action="<?php echo $source; ?>v1/<?php echo $ua; ?>/serial.api"&gt;
+&lt;form name="<?php echo $ua; ?>" method="POST" enctype="multipart/form-data" action="<?php echo API_URL; ?>/v2/<?php echo $ua; ?>/serial.api"&gt;
 	Select image to upload:
 	&lt;input type="file" name="<?php echo $ua; ?>" id="<?php echo $ua; ?>"&gt;
 	&lt;input type="submit" value="Upload Image" name="submit"&gt;
@@ -202,15 +147,15 @@ p {
     <p>This is done with the <em>json.api</em> extension at the end of the url, you replace the address with the Optical Character Recognition you are testing the following example is of calls to the api</p>
     <blockquote>
         <font color="#009900">You need too submit a form to the following URL for the field name of <em>'<?php echo $ua; ?>'</em> containing the image to be OCR'd</font><br/><br/>
-         <em>Form action path: <strong><?php echo $source; ?>v1/<?php echo $ua; ?>/json.api</strong></em>
-        <form name="<?php echo $ua; ?>" method="POST" enctype="multipart/form-data" action="<?php echo $source; ?>v1/<?php echo $ua; ?>/json.api">
+         <em>Form action path: <strong><?php echo API_URL; ?>/v2/<?php echo $ua; ?>/json.api</strong></em>
+        <form name="<?php echo $ua; ?>" method="POST" enctype="multipart/form-data" action="<?php echo API_URL; ?>/v2/<?php echo $ua; ?>/json.api">
     			Select image to upload:
     		     <input type="file" name="<?php echo $ua; ?>" id="<?php echo $ua; ?>">
    				 <input type="submit" value="Upload Image" name="submit">
 		</form>
 		<h3>Code Example:</h3>
 		<pre style="margin: 14px; padding: 12px; border: 2px solid #ee43a4;">
-&lt;form name="<?php echo $ua; ?>" method="POST" enctype="multipart/form-data" action="<?php echo $source; ?>v1/<?php echo $ua; ?>/json.api"&gt;
+&lt;form name="<?php echo $ua; ?>" method="POST" enctype="multipart/form-data" action="<?php echo API_URL; ?>/v2/<?php echo $ua; ?>/json.api"&gt;
 	Select image to upload:
 	&lt;input type="file" name="<?php echo $ua; ?>" id="<?php echo $ua; ?>"&gt;
 	&lt;input type="submit" value="Upload Image" name="submit"&gt;
@@ -221,30 +166,32 @@ p {
     <p>This is done with the <em>xml.api</em> extension at the end of the url, you replace the address with the Optical Character Recognition you are testing the following example is of calls to the api</p>
     <blockquote>
         <font color="#009900">You need too submit a form to the following URL for the field name of <em>'<?php echo $ua; ?>'</em> containing the image to be OCR'd</font><br/><br/>
-        <em>Form action path: <strong><?php echo $source; ?>v1/<?php echo $ua; ?>/xml.api</strong></em>
-        <form name="<?php echo $ua; ?>" method="POST" enctype="multipart/form-data" action="<?php echo $source; ?>v1/<?php echo $ua; ?>/xml.api">
+        <em>Form action path: <strong><?php echo API_URL; ?>/v2/<?php echo $ua; ?>/xml.api</strong></em>
+        <form name="<?php echo $ua; ?>" method="POST" enctype="multipart/form-data" action="<?php echo API_URL; ?>/v2/<?php echo $ua; ?>/xml.api">
     			Select image to upload:
     		     <input type="file" name="<?php echo $ua; ?>" id="<?php echo $ua; ?>">
    				 <input type="submit" value="Upload Image" name="submit">
 		</form>
 		<h3>Code Example:</h3>
 		<pre style="margin: 14px; padding: 12px; border: 2px solid #ee43a4;">
-&lt;form name="<?php echo $ua; ?>" method="POST" enctype="multipart/form-data" action="<?php echo $source; ?>v1/<?php echo $ua; ?>/xml.api"&gt;
+&lt;form name="<?php echo $ua; ?>" method="POST" enctype="multipart/form-data" action="<?php echo API_URL; ?>/v2/<?php echo $ua; ?>/xml.api"&gt;
 	Select image to upload:
 	&lt;input type="file" name="<?php echo $ua; ?>" id="<?php echo $ua; ?>"&gt;
 	&lt;input type="submit" value="Upload Image" name="submit"&gt;
 &lt;/form&gt;
 		</pre>
     </blockquote>
-    <?php if (file_exists(dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'apis.html')) {
-    	readfile(dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'apis.html');
-    }?>	
-    <?php if (!in_array(whitelistGetIP(true), whitelistGetIPAddy())) { ?>
-    <h2>Limits</h2>
-    <p>There is a limit of <?php echo MAXIMUM_QUERIES; ?> queries per hour. You can add yourself to the whitelist by using the following form API <a href="https://whitelist.labs.coop/">Whitelisting form</a>. This is only so this service isn't abused!!</p>
-    <?php } ?>
+    <h2>Following Image Formats Supported</h2>
+    <p>The following image format extension and titles are supported by this api, which the <strong>Maximum Upload Size Is: <em style='color:rgb(255,100,123); font-weight: bold; font-size: 132.6502%;'><?php echo ini_get('upload_max_filesize') ?>!!!</em></strong><br/></p>
+    <blockquote>
+    	<ol>
+    		<?php foreach($formats as $ext => $title) { ?>
+    		<ul><font style="font-size: 135%; font-weight: 800; margin-right: 10px;">*.<?php echo $ext; ?></font>&nbsp;~&nbsp;<?php echo $title; ?></ul>
+    		<?php } ?>
+    	</ol>
+    </blockquote>
     <h2>The Author</h2>
-    <p>This was developed by Simon Roberts in 2012 and is part of the Chronolabs System and Xortify. if you need to contact simon you can do so at the following address <a href="mailto:meshy@labs.coop">meshy@labs.coop</a></p></body>
+    <p>This was developed by Simon Roberts in 2018 and is part of the Chronolabs System and Xortify. if you need to contact simon you can do so at the following address <a href="mailto:simon@snails.email">simon@snails.email</a></p></body>
 </div>
 </html>
 <?php 

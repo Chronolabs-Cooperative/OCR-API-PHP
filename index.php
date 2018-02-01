@@ -21,23 +21,60 @@
  * @filesource
  */
 
-	error_reporting(E_ERROR);
-	define('MAXIMUM_QUERIES', 15);
-	
-	define('OCR_PATH', dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'ocr');
-	if (!is_dir(OCR_PATH))
-		mkdir(OCR_PATH, 0777, true);
-	
-	ini_set('memory_limit', '256M');
-	include dirname(__FILE__).'/wideimage/WideImage.php';
-	include dirname(__FILE__).'/functions.php';
+    
+    /**
+     * URI Path Finding of API URL Source Locality
+     * @var unknown_type
+     */
+    require_once __DIR__ . DIRECTORY_SEPARATOR . 'apiconfig.php';
+        
+    /**
+     * URI Path Finding of API URL Source Locality
+     * @var unknown_type
+     */
+    $odds = $inner = array();
+    foreach($_GET as $key => $values) {
+        if (!isset($inner[$key])) {
+            $inner[$key] = $values;
+        } elseif (!in_array(!is_array($values) ? $values : md5(json_encode($values, true)), array_keys($odds[$key]))) {
+            if (is_array($values)) {
+                $odds[$key][md5(json_encode($inner[$key] = $values, true))] = $values;
+            } else {
+                $odds[$key][$inner[$key] = $values] = "$values--$key";
+            }
+        }
+    }
+    
+    foreach($_POST as $key => $values) {
+        if (!isset($inner[$key])) {
+            $inner[$key] = $values;
+        } elseif (!in_array(!is_array($values) ? $values : md5(json_encode($values, true)), array_keys($odds[$key]))) {
+            if (is_array($values)) {
+                $odds[$key][md5(json_encode($inner[$key] = $values, true))] = $values;
+            } else {
+                $odds[$key][$inner[$key] = $values] = "$values--$key";
+            }
+        }
+    }
+    
+    foreach(parse_url('http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].(strpos($_SERVER['REQUEST_URI'], '?')?'&':'?').$_SERVER['QUERY_STRING'], PHP_URL_QUERY) as $key => $values) {
+        if (!isset($inner[$key])) {
+            $inner[$key] = $values;
+        } elseif (!in_array(!is_array($values) ? $values : md5(json_encode($values, true)), array_keys($odds[$key]))) {
+            if (is_array($values)) {
+                $odds[$key][md5(json_encode($inner[$key] = $values, true))] = $values;
+            } else {
+                $odds[$key][$inner[$key] = $values] = "$values--$key";
+            }
+        }
+    }
 
 	$help=false;
-	if (!isset($_GET['field']) || empty($_GET['field'])) {
+	if (!isset($inner['field']) || empty($inner['field'])) {
 		$help=true;
-	} elseif (isset($_GET['output']) || !empty($_GET['output'])) {
-		$field = trim($_GET['field']);
-		$output = trim($_GET['output']);
+	} elseif (isset($inner['output']) || !empty($inner['output'])) {
+	    $field = trim($inner['field']);
+	    $output = trim($inner['output']);
 	} else {
 		$help=true;
 	}
@@ -48,6 +85,7 @@
 		include dirname(__FILE__).'/help.php';
 		exit;
 	}
+	/**
 	session_start();
 	if (!in_array(whitelistGetIP(true), whitelistGetIPAddy())) {
 		if (isset($_SESSION['reset']) && $_SESSION['reset']<microtime(true))
@@ -61,7 +99,8 @@
 			exit;
 		}
 	}
-	
+	*/
+			
 	if (function_exists('http_response_code'))
 		http_response_code(200);
 	
@@ -74,22 +113,23 @@
 			echo '</pre>';
 			break;
 		case 'raw':
-			echo '{ '. implode ("} | {", $data) . ' }';
-			break;
+		    header('Content-type: application/x-httpd-php');
+		    die("<"."?"."php\n\n\treturn " . var_export($data, true) . ";\n\n?".">");
+		    break;
 		case 'json':
-			header('Content-type: application/json');
-			echo json_encode($data);
-			break;
+		    header('Content-type: application/json');
+		    die(json_encode($data));
+		    break;
 		case 'serial':
-			header('Content-type: text/html');
-			echo serialize($data);
-			break;
+		    header('Content-type: text/text');
+		    die(serialize($data));
+		    break;
 		case 'xml':
-			header('Content-type: application/xml');
-			$dom = new XmlDomConstruct('1.0', 'utf-8');
-			$dom->fromMixed(array('root'=>$data));
- 			echo $dom->saveXML();
-			break;
+		    header('Content-type: application/xml');
+		    $dom = new XmlDomConstruct('1.0', 'utf-8');
+		    $dom->fromMixed(array('root'=>$data));
+		    die($dom->saveXML());
+		    break;
 	}
 	exit(0);
 ?>
