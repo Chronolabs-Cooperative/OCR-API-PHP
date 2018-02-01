@@ -1,6 +1,6 @@
 ## Chronolabs Cooperative presents
 
-# Optical Character Recognition REST API v1.1.2
+# Optical Character Recognition REST API v2.0.2
 
 #### Demo: http://ocr.snails.email
 
